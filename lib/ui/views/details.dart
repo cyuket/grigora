@@ -5,12 +5,13 @@ import 'package:grigora/ui/shared/base_view.dart';
 import 'package:grigora/ui/shared/shared_styles.dart';
 import 'package:grigora/ui/shared/ui_helpers.dart';
 import 'package:flutter/material.dart';
+import 'package:grigora/ui/widgets/drawer.dart';
 import 'package:grigora/viewmodel/detail_view_model.dart';
 
 class DetailPageScreen extends StatelessWidget {
   final String name;
   final image;
-
+  final scaffoldKey = GlobalKey<ScaffoldState>();
   DetailPageScreen({@required this.image, this.name});
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,7 @@ class DetailPageScreen extends StatelessWidget {
         builder: (context, model, child) {
           return Scaffold(
             backgroundColor: Colors.white,
+            key: scaffoldKey,
             appBar: AppBar(
               leading: Padding(
                 padding: const EdgeInsets.only(left: 8.0),
@@ -58,14 +60,20 @@ class DetailPageScreen extends StatelessWidget {
                 Icon(Icons.notifications_outlined, color: AppColors.textColor),
                 horizontalSpaceSmall,
                 IconButton(
-                  icon: Icon(Icons.menu),
-                  onPressed: null,
+                  icon: Icon(
+                    Icons.menu,
+                    color: AppColors.textColor,
+                  ),
+                  onPressed: () {
+                    scaffoldKey.currentState.openEndDrawer();
+                  },
                 ),
                 SizedBox(width: 20),
               ],
             ),
+            endDrawer: CustomDrawer(),
             body: model.busy
-                ? Center( 
+                ? Center(
                     child: CircularProgressIndicator(),
                   )
                 : SingleChildScrollView(

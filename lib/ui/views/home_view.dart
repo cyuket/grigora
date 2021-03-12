@@ -112,8 +112,6 @@ class _HomeViewScreenState extends State<HomeViewScreen> {
                     color: AppColors.textColor,
                   ),
                   onPressed: () {
-                    print("su");
-
                     scaffoldKey.currentState.openEndDrawer();
                   },
                 ),
