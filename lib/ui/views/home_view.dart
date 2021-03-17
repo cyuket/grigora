@@ -26,8 +26,35 @@ class _HomeViewScreenState extends State<HomeViewScreen> {
   int currentIndex = 0;
   bool isLast = false;
   bool isFirst = true;
+  bool isLast2 = false;
+  bool isFirst2 = true;
+
+  ScrollController _controller;
   nextFunction() {
     _pageController.nextPage(duration: _kDuration, curve: _kCurve);
+  }
+
+  _scrollListener() {
+    if (_controller.offset >= _controller.position.maxScrollExtent &&
+        !_controller.position.outOfRange) {
+      setState(() {
+        isLast2 = true;
+      });
+    } else {
+      setState(() {
+        isLast2 = false;
+      });
+    }
+    if (_controller.offset <= _controller.position.minScrollExtent &&
+        !_controller.position.outOfRange) {
+      setState(() {
+        isFirst2 = true;
+      });
+    } else {
+      setState(() {
+        isFirst2 = false;
+      });
+    }
   }
 
   previousPage() {
@@ -58,6 +85,8 @@ class _HomeViewScreenState extends State<HomeViewScreen> {
   void initState() {
     super.initState();
     _pageController = PageController();
+    _controller = ScrollController();
+    _controller.addListener(_scrollListener);
   }
 
   @override
@@ -125,6 +154,150 @@ class _HomeViewScreenState extends State<HomeViewScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(
+                      height: 50,
+                      width: double.infinity,
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: "Search for vendors and cuisines",
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 20),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.grey.withOpacity(0.4),
+                            ),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          suffixIcon: Icon(Icons.search),
+                        ),
+                      ),
+                    ),
+                    verticalSpace(20),
+                    Container(
+                      height: 100,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          ListView(
+                            controller: _controller,
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              RowWidget(
+                                text: "Bakery & Cakes",
+                                image: AppAssets.back1,
+                              ),
+                              RowWidget(
+                                text: "Fries & Grills",
+                                image: AppAssets.back2,
+                              ),
+                              RowWidget(
+                                text: "Dishes",
+                                image: AppAssets.back3,
+                              ),
+                              RowWidget(
+                                text: "Drinks",
+                                image: AppAssets.back4,
+                              ),
+                              RowWidget(
+                                text: "Fast Foods",
+                                image: AppAssets.back5,
+                              ),
+                              RowWidget(
+                                text: "Daily Meals & Diets",
+                                image: AppAssets.back6,
+                              ),
+                              RowWidget(
+                                text: "Swallow",
+                                image: AppAssets.back7,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              !isFirst2
+                                  ? InkWell(
+                                      child: Container(
+                                        height: 32,
+                                        width: 32,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: AppColors.secondaryColor),
+                                          borderRadius:
+                                              BorderRadius.circular(1000),
+                                        ),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.arrow_back,
+                                            color: AppColors.secondaryColor,
+                                            size: 20,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox(),
+                              Spacer(),
+                              !isLast2
+                                  ? InkWell(
+                                      child: Container(
+                                        height: 32,
+                                        width: 32,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: AppColors.secondaryColor),
+                                          borderRadius:
+                                              BorderRadius.circular(1000),
+                                        ),
+                                        child: Center(
+                                          child: Icon(
+                                            Icons.arrow_forward,
+                                            color: AppColors.secondaryColor,
+                                            size: 20,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox(),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    verticalSpace(20),
+                    SizedBox(
+                      height: 40,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: [
+                          _items(
+                            text: "Above 3",
+                            isStar: true,
+                            isRow: true,
+                          ),
+                          _items(
+                            text: "##",
+                            isRow: true,
+                          ),
+                          _items(
+                            text: "Currently Open",
+                            color: Colors.grey.withOpacity(0.4),
+                          ),
+                          _items(
+                            text: "Pickup",
+                            color: Colors.grey.withOpacity(0.4),
+                          ),
+                          _items(
+                            text: "Trending",
+                            color: Colors.grey.withOpacity(0.4),
+                          ),
+                          _items(
+                            text: "Vegetarian",
+                            color: Colors.grey.withOpacity(0.4),
+                          ),
+                        ],
+                      ),
+                    ),
+                    verticalSpace(20),
                     Row(
                       children: [
                         Column(
@@ -384,5 +557,94 @@ class _HomeViewScreenState extends State<HomeViewScreen> {
             ),
           );
         });
+  }
+
+  Container _items({
+    String text,
+    Color color,
+    bool isStar = false,
+    isRow = false,
+  }) {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.only(right: 10.0),
+        child: Container(
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            border: Border.all(),
+            borderRadius: BorderRadius.circular(20),
+            color: color != null ? color : Colors.transparent,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                text,
+                style: textStyle.copyWith(
+                    fontSize: 13, fontWeight: FontWeight.w900),
+              ),
+              horizontalSpaceSmall,
+              isStar
+                  ? Icon(
+                      Icons.star,
+                      color: Colors.black,
+                      size: 20,
+                    )
+                  : SizedBox(),
+              isRow
+                  ? Icon(
+                      Icons.keyboard_arrow_down_outlined,
+                      color: AppColors.textColor,
+                      size: 20,
+                    )
+                  : SizedBox(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class RowWidget extends StatelessWidget {
+  const RowWidget({
+    Key key,
+    this.image,
+    this.text,
+  }) : super(key: key);
+
+  final String image;
+  final String text;
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 10.0),
+      child: Column(
+        children: [
+          Container(
+            height: 60,
+            width: 60,
+            decoration: BoxDecoration(
+                color: Color.fromRGBO(0, 0, 0, 0.07),
+                borderRadius: BorderRadius.circular(100)),
+            child: Center(
+              child: SizedBox(
+                height: 30,
+                width: 30,
+                child: Image.asset(image),
+              ),
+            ),
+          ),
+          verticalSpace(10),
+          Text(
+            text,
+            style: textStyle.copyWith(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
